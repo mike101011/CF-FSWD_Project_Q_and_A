@@ -1,0 +1,20 @@
+Technology:PHP
+
+DB:
+.) Users: (role: adm, user), name, birthdate, email, github link ,status ok, banned, points
+
+.) questions (has fk with users) status active or inactive, votes, up and down, resolved or not, post date.
+
+.)middle man Questions--Tags (id, fk-quid, fk-tagid) questions-tags is many to many.
+
+.) Tags (ID,title) 
+
+.)answers (has fk question id-- one question has many answers)
+
+
+Features:
+ Question first inactive, if voted up or answer then active. When landing page is loaded, check for questions which have been  inactive for more than 2 days, delete them.
+
+every user can only vote once per question, when question is upvoted, then author student gets point
+
+Voting up and down via API (AJAX).
