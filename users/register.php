@@ -11,34 +11,29 @@ require_once '../components/file_upload.php';
 $error = false;
 $fname = $lname = $email = $date_of_birth = $pass = $picture = ''; // otw error in form if variables not defined
 $fnameError = $lnameError = $emailError = $dateError = $passError = $picError = '';
+function inpTransf($val)
+{
+    $i = trim($val);
+    $i = strip_tags($i);
+    return htmlspecialchars($i);
+}
 if (isset($_POST['btn-signup'])) {
+    $fname = inpTransf($_POST["fname"]);
 
     // sanitize user input to prevent sql injection
-    $fname = trim($_POST['fname']);
 
     //trim - strips whitespace (or other characters) from the beginning and end of a string
-    $fname = strip_tags($fname);
 
     // strip_tags -- strips HTML and PHP tags from a string
 
-    $fname = htmlspecialchars($fname);
     // htmlspecialchars converts special characters to HTML entities
-
-    $lname = trim($_POST['lname']);
-    $lname = strip_tags($lname);
-    $lname = htmlspecialchars($lname);
+    $lname = inpTransf($_POST['lname']);
     //Use function in order not to repeat code!!Better!
-    $email = trim($_POST['email']);
-    $email = strip_tags($email);
-    $email = htmlspecialchars($email);
+    $email = inpTransf($_POST['email']);
+    $date_of_birth = inpTransf($_POST['date_of_birth']);
+    $pass = inpTransf($_POST['pass']);
 
-    $date_of_birth = trim($_POST['date_of_birth']);
-    $date_of_birth = strip_tags($date_of_birth);
-    $date_of_birth = htmlspecialchars($date_of_birth);
 
-    $pass = trim($_POST['pass']);
-    $pass = strip_tags($pass);
-    $pass = htmlspecialchars($pass);
 
     $uploadError = '';
     $picture = file_upload($_FILES['picture']);
@@ -61,7 +56,7 @@ if (isset($_POST['btn-signup'])) {
         $emailError = "Please enter valid email address.";
     } else {
         // checks whether the email exists or not
-        $query = "SELECT email FROM user WHERE email='$email'";
+        $query = "SELECT email FROM users WHERE email='$email'";
         $result = mysqli_query($connect, $query);
         $count = mysqli_num_rows($result);
         if ($count != 0) {
@@ -88,8 +83,8 @@ if (isset($_POST['btn-signup'])) {
     // if there's no error, continue to signup
     if (!$error) {
 
-        $query = "INSERT INTO user(f_name, s_name, password, date_of_birth, email, u_picture)
-                 VALUES('$fname', '$lname', '$password', '$date_of_birth', '$email', '$picture->fileName')";
+        $query = "INSERT INTO users(f_name, l_name, b_date, email, pass, picture)
+                 VALUES('$fname', '$lname', '$date_of_birth', '$email', '$password', '$picture->fileName')";
         $res = mysqli_query($connect, $query);
 
         if ($res) {

@@ -3,8 +3,8 @@ function file_upload($picture, $source = 'user') //**Please note that always whe
 {
     $result = new stdClass(); //this object will carry status from file upload
     //new code:
-    if ($source = 'hotels') {
-        $result->fileName = 'hotel-default.jpg';
+    if ($source == 'tags') {
+        $result->fileName = 'default-tag.jpg';
     } else {
         $result->fileName = 'default-user.png';
         if (isset($_SESSION['adm'])) {
@@ -31,13 +31,7 @@ function file_upload($picture, $source = 'user') //**Please note that always whe
                 if ($fileSize < 500000) { //500kb this number is in bytes
                     //it gives a file name based microseconds
                     $fileNewName = uniqid('') . "." . $fileExtension; // 1233343434.jpg i.e
-                    if ($source == 'hotels') { //change later
-
-                        $destination = "../pictures/$fileNewName";
-                    } elseif ($source == 'user') {
-
-                        $destination = "../pictures/$fileNewName";
-                    }
+                    $destination = "../pictures/$fileNewName";
                     if (move_uploaded_file($fileTmpName, $destination)) {
                         $result->error = 0;
                         $result->fileName = $fileNewName;
