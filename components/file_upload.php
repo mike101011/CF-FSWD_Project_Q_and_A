@@ -1,4 +1,10 @@
 <?php
+function inpTransf($val)
+{
+    $i = trim($val);
+    $i = strip_tags($i);
+    return htmlspecialchars($i);
+}
 function file_upload($picture, $source = 'user') //**Please note that always when uploading the images the form tag in HTML must have the attribute: enctype="multipart/form-data".
 {
     $result = new stdClass(); //this object will carry status from file upload

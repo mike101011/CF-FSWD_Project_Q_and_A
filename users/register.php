@@ -9,14 +9,8 @@ if (isset($_SESSION['adm']) != "") {
 require_once '../components/db_connect.php';
 require_once '../components/file_upload.php';
 $error = false;
-$fname = $lname = $email = $date_of_birth = $pass = $picture = ''; // otw error in form if variables not defined
-$fnameError = $lnameError = $emailError = $dateError = $passError = $picError = '';
-function inpTransf($val)
-{
-    $i = trim($val);
-    $i = strip_tags($i);
-    return htmlspecialchars($i);
-}
+$fname = $lname = $email = $date_of_birth = $pass = $pass2 = $picture = ''; // otw error in form if variables not defined
+$fnameError = $lnameError = $emailError = $dateError = $passError = $pass2Error = $picError = '';
 if (isset($_POST['btn-signup'])) {
     $fname = inpTransf($_POST["fname"]);
 
@@ -32,6 +26,7 @@ if (isset($_POST['btn-signup'])) {
     $email = inpTransf($_POST['email']);
     $date_of_birth = inpTransf($_POST['date_of_birth']);
     $pass = inpTransf($_POST['pass']);
+    $pass2 = inpTransf($_POST["pass2"]);
 
 
 
@@ -76,6 +71,9 @@ if (isset($_POST['btn-signup'])) {
     } else if (strlen($pass) < 6) {
         $error = true;
         $passError = "Password must have at least 6 characters.";
+    } elseif ($pass !== $pass2) {
+        $error = true;
+        $pass2Error = "Entered passwords do not match!";
     }
 
     // password hashing for security
@@ -146,6 +144,8 @@ mysqli_close($connect);
             </div>
             <input type="password" name="pass" class="form-control" placeholder="Enter Password" maxlength="15" />
             <span class="text-danger"> <?php echo $passError; ?> </span>
+            <input type="password" name="pass2" class="form-control" placeholder="Confirm Password" maxlength="15" />
+            <span class="text-danger"> <?php echo $pass2Error; ?> </span>
             <hr />
             <button type="submit" class="btn btn-block btn-primary" name="btn-signup">Sign Up</button>
             <hr />
