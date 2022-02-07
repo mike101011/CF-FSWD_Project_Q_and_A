@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (isset($_SESSION['user']) != "") {
-    header("Location: users/userhome.php"); // redirects to home.php
+    header("Location: users/user-home.php"); // redirects to home.php
 }
 if (isset($_SESSION['adm']) != "") {
     header("Location: users/dashboard.php"); // redirects to home.php
@@ -31,8 +31,8 @@ if (isset($_POST["submit-btn"])) {
                 $_SESSION["adm"] = $row["u_id"];
                 header("Location: users/dashboard.php");
             } else {
-                $_SESSION["user"] == $row["u_id"];
-                header("Location: users/userhome.php");
+                $_SESSION["user"] = $row["u_id"];
+                header("Location: users/user-home.php");
             }
         }
     }

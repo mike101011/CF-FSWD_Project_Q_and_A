@@ -149,7 +149,7 @@ mysqli_close($connect);
             <hr />
             <button type="submit" class="btn btn-block btn-primary" name="btn-signup">Sign Up</button>
             <hr />
-            <a href="login.php">Sign in Here...</a>
+            <a href="../index.php">Sign in Here...</a>
         </form>
     </div>
 </body>
