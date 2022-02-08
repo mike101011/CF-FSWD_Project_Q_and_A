@@ -29,9 +29,13 @@ if (isset($_SESSION["user"])) {
 </head>
 
 <body>
-    <a href="logout.php" class="btn btn-secondary">Log out</a>
-    <h5>Hello, <?php echo $fname . " " . $lname; ?>!</h5>
-    <img src="../pictures/<?php echo $pic; ?>" alt="" style="max-width: 300px;">
+    <div class="container">
+        <a href="edit.php?id=<?php echo $id; ?>" class="btn btn-info">Edit your profile</a>
+        <a href="logout.php" class="btn btn-secondary">Log out</a>
+        <h5>Hello, <?php echo $fname . " " . $lname; ?>!</h5>
+        <img src="../pictures/<?php echo $pic; ?>" alt="" style="max-width: 300px;">
+    </div>
+
 </body>
 
 </html>

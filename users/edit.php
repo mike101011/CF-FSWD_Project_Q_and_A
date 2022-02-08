@@ -16,20 +16,38 @@ if (!isset($_GET["id"])) {
         require_once "../components/file_upload.php";
         $id = $_GET["id"];
         $sql = "SELECT * FROM users WHERE u_id='$id';";
-        $res = mysqli_query($connect, $res);
+        $res = mysqli_query($connect, $sql);
         $data = mysqli_fetch_assoc($res);
         $fname = $data["f_name"];
         $lname = $data["l_name"];
         $b_date = $data["b_date"];
         $email = $data["email"];
-        $pass1 = $pass2 = $pass3 = $passError = $fnameError = $emailError = "";
+        $status = $data["status"];
+        $pass1 = $pass2 = $pass3 = $passError = $fnameError = $emailError = $message = $opt = $opttxt = $stattxt = "";
+        if ($status == "ok") {
+            $stattxt = "OK";
+            $opt = "banned";
+            $opttxt = "Banned";
+        } else {
+            $stattxt = "Banned";
+            $opt = "ok";
+            $opttxt = "OK";
+        }
         if ($data["web_page"]) {
             $webpage = $data["web_page"];
         } else {
             $webpage = null;
         }
-        $pic = $data["pic"];
+        $pic = $data["picture"];
         $class = 'd-none';
+        $updateclass = "d-none";
+        if (isset($_SESSION["user"])) {
+            $previous = "user-home.php";
+        }
+        if (isset($_SESSION["adm"])) {
+            $previous = "dashboard.php";
+            $updateclass = "";
+        }
 
         if (isset($_POST["submit"])) {
             $error = false;
@@ -46,6 +64,7 @@ if (!isset($_GET["id"])) {
                 $pass2 = $_POST["pass2"];
                 $pass3 = $_POST["pass3"];
                 $webpage = $_POST["webpage"];
+                $status = $_POST["status"];
                 $pictureArray = file_upload($_FILES['picture']); //file_upload() called
                 $pic = $pictureArray->fileName;
                 $uploadError = '';
@@ -72,25 +91,44 @@ if (!isset($_GET["id"])) {
                     $error = true;
                     $passError = "New password must have at least 6 characters.";
                 } else {
-                    $sql = "SELECT * FROM users WHERE u_id='$id';";
-                    $res = mysqli_query($connect, $sql);
-                    $data = mysqli_fetch_assoc($res);
-                    $password = $data["pass"];
-                    $passError = "Password unchanged.";
-                    if (!empty($pass1)) {
-                        $pass1 = inpTransf($pass1);
-                        $pass2 = inpTransf($pass2);
-                        $pass3 = inpTransf($pass3);
-                        if ($password == hash('sha256', $pass1)) {
-                            $password = hash('sha256', $pass2);
-                            $passError = "Password modified!";
-                        }
+                    $str1 = $str2 = "";
+                    if (isset($_SESSION["adm"])) {
+                        $str1 = "status='$status', ";
+                        $str2 = ", status='$status' ";
                     }
-                    if ($pictureArray->error === 0) {
-                        ($_POST["image"] == "default-user.png") ?: unlink("../pictures/{$_POST["image"]}");
-                        $sql = "UPDATE users SET f_name = '$fname', l_name = '$lname', b_date = '$b_date',email = '$email', pass='$password', web_page='$webpage',  picture = '$pic' WHERE u_id = {$id}";
-                    } else {
-                        $sql = "UPDATE users SET f_name = '$fname', l_name = '$lname', b_date = '$b_date',email = '$email', pass='$password', web_page='$webpage' WHERE u_id = {$id}";
+                    if (!$error) {
+                        $sql = "SELECT * FROM users WHERE u_id='$id';";
+                        $res = mysqli_query($connect, $sql);
+                        $data = mysqli_fetch_assoc($res);
+                        $password = $data["pass"];
+                        $passError = "Password unchanged.";
+                        if (!empty($pass1)) {
+                            $pass1 = inpTransf($pass1);
+                            $pass2 = inpTransf($pass2);
+                            $pass3 = inpTransf($pass3);
+                            if ($password == hash('sha256', $pass1)) {
+                                $password = hash('sha256', $pass2);
+                                $passError = "Password modified!";
+                            }
+                        }
+
+                        if ($pictureArray->error === 0) {
+                            ($_POST["image"] == "default-user.png") ?: unlink("../pictures/{$_POST["image"]}");
+                            $sql = "UPDATE users SET f_name = '$fname', l_name = '$lname', b_date = '$b_date',email = '$email', pass='$password', web_page='$webpage'," . $str1 . "  picture = '$pic' WHERE u_id = {$id}";
+                        } else {
+                            $sql = "UPDATE users SET f_name = '$fname', l_name = '$lname', b_date = '$b_date',email = '$email', pass='$password', web_page='$webpage'" . $str2 . " WHERE u_id = {$id}";
+                        }
+                        if (mysqli_query($connect, $sql) === true) {
+                            $class = "alert alert-success";
+                            $message = "The record was successfully updated";
+                            $uploadError = ($pictureArray->error != 0) ? $pictureArray->ErrorMessage : '';
+                            header("refresh:2;url=edit.php?id={$id}");
+                        } else {
+                            $class = "alert alert-danger";
+                            $message = "Error while updating record : <br>" . $connect->error;
+                            $uploadError = ($pictureArray->error != 0) ? $pictureArray->ErrorMessage : '';
+                            header("refresh:2;url=edit.php?id={$id}");
+                        }
                     }
                 }
             }
@@ -129,7 +167,7 @@ mysqli_close($connect);
             <p><?php echo $passError; ?></p>
         </div>
 
-        <h2>Update</h2>
+        <h2>Edit Profile</h2>
         <img class='img-thumbnail rounded-circle' src='../pictures/<?php echo $pic ?>' alt="<?php echo $fname ?>">
         <form method="post" enctype="multipart/form-data">
             <table class="table">
@@ -166,6 +204,17 @@ mysqli_close($connect);
                 <tr>
                     <th>Confirm New Password</th>
                     <td><input type="password" class="form-control" name="pass3" placeholder="Confirm new password"></td>
+                </tr>
+                <tr class="<?php echo $updateclass; ?>">
+                    <th>Status</th>
+                    <td><select name="status" class="form-control">
+                            <option value="<?php echo $status; ?>" selected><?php echo $stattxt; ?></option>
+                            <option value="<?php echo $opt; ?>"><?php echo $opttxt; ?></option>
+
+                        </select>
+
+
+                    </td>
                 </tr>
                 <tr>
                     <th>Picture</th>
