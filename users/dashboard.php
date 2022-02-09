@@ -29,7 +29,7 @@ if (isset($_SESSION["adm"])) {
                         <td>" . $row["l_name"] . "</td>
                         <td>" . $row["b_date"] . "</td>
                         <td>" . $row["status"] . "</td>
-                        <td><a href='edit.php?id=" . $row["u_id"] . "' class='btn btn-info'>Edit</a></td>
+                        <td><a href='edit.php?id=" . $row["u_id"] . "' class='btn btn-info'>Edit</a> <a href='read.php?id=" . $row["u_id"] . "' class='btn btn-success'>Info</a> <a href='delete.php?id=" . $row["u_id"] . "' class='btn btn-danger'>Delete</a></td>
                     </tr>";
             }
         }

@@ -61,7 +61,7 @@ if (isset($_POST["submit-btn"])) {
             </div>
             <span class="text-danger"><?php echo $emailError; ?></span>
             <div><input type="password" class="form-control" name="pass" placeholder="Password"></div>
-            <button type="submit" name="submit-btn" class="btn btn-secondary">Sign in!</button>
+            <button type="submit" name="submit-btn" class="btn btn-secondary">Sign in!</button> <span>or register</span><a href="users/register.php" class="btn btn-success">Here</a>
 
         </form>
     </div>

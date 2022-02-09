@@ -65,8 +65,9 @@ if (!isset($_GET["id"])) {
                 $pass3 = $_POST["pass3"];
                 $webpage = $_POST["webpage"];
                 $status = $_POST["status"];
+                $pic = $_POST["image"];
                 $pictureArray = file_upload($_FILES['picture']); //file_upload() called
-                $pic = $pictureArray->fileName;
+
                 $uploadError = '';
                 if (empty($fname) || empty($lname)) {
                     $error = true;
@@ -114,6 +115,7 @@ if (!isset($_GET["id"])) {
 
                         if ($pictureArray->error === 0) {
                             ($_POST["image"] == "default-user.png") ?: unlink("../pictures/{$_POST["image"]}");
+                            $pic = $pictureArray->fileName;
                             $sql = "UPDATE users SET f_name = '$fname', l_name = '$lname', b_date = '$b_date',email = '$email', pass='$password', web_page='$webpage'," . $str1 . "  picture = '$pic' WHERE u_id = {$id}";
                         } else {
                             $sql = "UPDATE users SET f_name = '$fname', l_name = '$lname', b_date = '$b_date',email = '$email', pass='$password', web_page='$webpage'" . $str2 . " WHERE u_id = {$id}";

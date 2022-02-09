@@ -31,6 +31,7 @@ if (isset($_SESSION["user"])) {
 <body>
     <div class="container">
         <a href="edit.php?id=<?php echo $id; ?>" class="btn btn-info">Edit your profile</a>
+        <a href="read.php?id=<?php echo $id; ?>" class="btn btn-success">See your data</a>
         <a href="logout.php" class="btn btn-secondary">Log out</a>
         <h5>Hello, <?php echo $fname . " " . $lname; ?>!</h5>
         <img src="../pictures/<?php echo $pic; ?>" alt="" style="max-width: 300px;">
