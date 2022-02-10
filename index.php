@@ -27,9 +27,17 @@ if (isset($_POST["submit-btn"])) {
         }
         if (!$error) {
             $row = mysqli_fetch_assoc($res);
+            if ($row["status"] == "banned") {
+                $_SESSION["banned"] = $row["u_id"];
+                header("Location: users/block.php");
+                mysqli_close($connect);
+                exit;
+            }
             if ($row["role"] == "adm") {
                 $_SESSION["adm"] = $row["u_id"];
                 header("Location: users/dashboard.php");
+                mysqli_close($connect);
+                exit;
             } else {
                 $_SESSION["user"] = $row["u_id"];
                 header("Location: users/user-home.php");
@@ -37,6 +45,7 @@ if (isset($_POST["submit-btn"])) {
         }
     }
 }
+mysqli_close($connect);
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -3,13 +3,13 @@ Technology:PHP
 DB:
 .) Users: (role: adm, user), name, birthdate, email, github link ,status ok, banned, points
 
-.) questions (has fk with users) status active or inactive, votes, up and down, resolved or not, post date.
+.) questions (has fk with users) title, status active or inactive, votes, up and down, resolved or not, post date.
 
 .)middle man Questions--Tags (id, fk-quid, fk-tagid) questions-tags is many to many.
 
 .) Tags (ID,title) 
 
-.)answers (has fk question id-- one question has many answers)
+.)answers (has fk question id-- one question has many answers; also has fk user-one user many answers.)
 
 
 Features:
