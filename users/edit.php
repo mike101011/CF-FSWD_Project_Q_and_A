@@ -148,12 +148,6 @@ mysqli_close($connect);
     <title>Edit User</title>
     <?php require_once '../components/boot-css.php' ?>
     <style type="text/css">
-        fieldset {
-            margin: auto;
-            margin-top: 100px;
-            width: 60%;
-        }
-
         .img-thumbnail {
             width: 70px !important;
             height: 70px !important;
