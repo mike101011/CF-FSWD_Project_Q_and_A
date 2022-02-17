@@ -31,7 +31,7 @@ if (!isset($_GET["id"])) {
     }
     $standardclass = $answerclass = "d-none";
     $standbdy = $answbdy = "";
-    $sql2 = "SELECT * FROM answers LEFT JOIN users on answers.fk_u_id=u_id WHERE answers.fk_q_id='$q_id' AND a_resolve='0';";
+    $sql2 = "SELECT * FROM answers LEFT JOIN users on answers.fk_u_id=u_id WHERE answers.fk_q_id='$q_id' AND a_resolve='0' ORDER BY a_date DESC;";
     $res2 = mysqli_query($connect, $sql2);
     if ($res2->num_rows > 0) {
         $standardclass = "";
@@ -50,7 +50,7 @@ if (!isset($_GET["id"])) {
             </div>";
         }
     }
-    $sql3 = "SELECT * FROM answers LEFT JOIN users on answers.fk_u_id=u_id WHERE answers.fk_q_id='$q_id' AND a_resolve='1';";
+    $sql3 = "SELECT * FROM answers LEFT JOIN users on answers.fk_u_id=u_id WHERE answers.fk_q_id='$q_id' AND a_resolve='1' ORDER BY a_date DESC;";
     $res3 = mysqli_query($connect, $sql3);
     if ($res3->num_rows > 0) {
         $answerclass = "";
@@ -127,16 +127,17 @@ if (!isset($_GET["id"])) {
             </div>
             <div class="<?php echo $standardclass; ?>">
                 <h4>Comments</h4>
-                <?php echo $standbdy; ?>
+                <div id="comments"><?php echo $standbdy; ?></div>
             </div>
             <div>
                 <h4>Post Comment</h4>
-                <form method="post" enctype="multipart/form-data">
+                <form id="comment-form" method="post" enctype="multipart/form-data">
                     <fieldset>
                         <div>
-                            <textarea name="answer" cols="40" rows="15" placeholder="Comment here"></textarea>
+                            <textarea id="comment-area" name="answer" cols="40" rows="15" placeholder="Comment here"></textarea>
                             <span class="text-danger"><?php echo $textError; ?></span>
                         </div>
+                        <input type="hidden" id="question" value="<?php echo $q_id; ?>">
                         <button type="submit" name="submit" class="btn btn-secondary">Post</button>
 
                     </fieldset>
@@ -144,6 +145,28 @@ if (!isset($_GET["id"])) {
             </div>
         </div>
     </div>
+
+    <script>
+        let form = document.getElementById("comment-form");
+        form.addEventListener("submit", commentfct);
+
+        function commentfct(e) {
+            e.preventDefault();
+            let a_text = document.getElementById("comment-area").value;
+            let q_id = document.getElementById("question").value;
+            let params = `a_text=${a_text}&&q_id=${q_id}`;
+            let request = new XMLHttpRequest();
+            request.open("POST", "../process/comment.php", true);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.onload = function() {
+                if (this.status == 200) {
+                    document.getElementById("comments").innerHTML = this.responseText;
+
+                }
+            }
+            request.send(params);
+        }
+    </script>
 
 </body>
 
