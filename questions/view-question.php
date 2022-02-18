@@ -31,7 +31,7 @@ if (!isset($_GET["id"])) {
     }
     $standardclass = $answerclass = "d-none";
     $standbdy = $answbdy = "";
-    $sql2 = "SELECT * FROM answers LEFT JOIN users on answers.fk_u_id=u_id WHERE answers.fk_q_id='$q_id' AND a_resolve='0' ORDER BY a_date DESC;";
+    $sql2 = "SELECT * FROM answers LEFT JOIN users on answers.fk_u_id=u_id WHERE answers.fk_q_id='$q_id' AND a_resolve='0' ORDER BY a_id DESC;";
     $res2 = mysqli_query($connect, $sql2);
     if ($res2->num_rows > 0) {
         $standardclass = "";
@@ -50,7 +50,7 @@ if (!isset($_GET["id"])) {
             </div>";
         }
     }
-    $sql3 = "SELECT * FROM answers LEFT JOIN users on answers.fk_u_id=u_id WHERE answers.fk_q_id='$q_id' AND a_resolve='1' ORDER BY a_date DESC;";
+    $sql3 = "SELECT * FROM answers LEFT JOIN users on answers.fk_u_id=u_id WHERE answers.fk_q_id='$q_id' AND a_resolve='1' ORDER BY a_id DESC;";
     $res3 = mysqli_query($connect, $sql3);
     if ($res3->num_rows > 0) {
         $answerclass = "";
@@ -70,28 +70,6 @@ if (!isset($_GET["id"])) {
             </div>";
         }
     }
-    $error = false;
-    $textError = "";
-    if (isset($_POST["submit"])) {
-        $a_text = $_POST["answer"];
-        $q_id = $_GET["id"];
-        if (isset($_SESSION["adm"])) {
-            $u_id = $_SESSION["adm"];
-        } else {
-            $u_id = $_SESSION["user"];
-        }
-        $date = date("Y.m.d");
-        if (empty($a_text)) {
-            $error = true;
-            $textError = "No comment written.";
-        }
-        if (!$error) {
-            $querry = "INSERT INTO answers(a_text, fk_q_id,fk_u_id,a_date) VALUES('$a_text','$q_id','$u_id','$date');";
-            if (mysqli_query($connect, $querry)) {
-                echo "  SUCCESS!!";
-            }
-        }
-    }
 }
 ?>
 <!DOCTYPE html>
@@ -103,6 +81,13 @@ if (!isset($_GET["id"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Question Details</title>
     <?php require_once "../components/boot-css.php"; ?>
+    <style>
+        #comments {
+            height: 15rem;
+            overflow-y: scroll;
+            margin-bottom: 1em;
+        }
+    </style>
 </head>
 
 <body>
@@ -129,15 +114,15 @@ if (!isset($_GET["id"])) {
                 <h4>Comments</h4>
                 <div id="comments"><?php echo $standbdy; ?></div>
             </div>
+            <hr>
             <div>
                 <h4>Post Comment</h4>
                 <form id="comment-form" method="post" enctype="multipart/form-data">
                     <fieldset>
                         <div>
-                            <textarea id="comment-area" name="answer" cols="40" rows="15" placeholder="Comment here"></textarea>
-                            <span class="text-danger"><?php echo $textError; ?></span>
+                            <textarea id="comment-area" name="a_text" cols="40" rows="15" placeholder="Comment here"></textarea>
                         </div>
-                        <input type="hidden" id="question" value="<?php echo $q_id; ?>">
+                        <input type="hidden" id="question" name="q_id" value="<?php echo $q_id; ?>">
                         <button type="submit" name="submit" class="btn btn-secondary">Post</button>
 
                     </fieldset>
@@ -154,17 +139,24 @@ if (!isset($_GET["id"])) {
             e.preventDefault();
             let a_text = document.getElementById("comment-area").value;
             let q_id = document.getElementById("question").value;
-            let params = `a_text=${a_text}&&q_id=${q_id}`;
-            let request = new XMLHttpRequest();
-            request.open("POST", "../process/comment.php", true);
-            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            request.onload = function() {
-                if (this.status == 200) {
-                    document.getElementById("comments").innerHTML = this.responseText;
+            if (a_text == "") {
+                alert("No comment written.");
+            } else {
+                let params = `a_text=${a_text}&&q_id=${q_id}`;
+                let request = new XMLHttpRequest();
+                request.open("POST", "../process/comment.php", true);
+                request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                request.onload = function() {
+                    if (this.status == 200) {
+                        document.getElementById("comments").innerHTML = this.responseText;
 
+                    }
                 }
+                request.send(params);
+                document.getElementById("comment-form").reset();
             }
-            request.send(params);
+
+
         }
     </script>
 
