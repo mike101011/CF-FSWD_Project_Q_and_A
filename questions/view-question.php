@@ -16,6 +16,11 @@ if (!isset($_GET["id"])) {
         $u_id = $_SESSION["user"];
     }
     $likeclass = "";
+    $querry = "SELECT * FROM vote_details WHERE fk_q_id='$q_id' AND fk_u_id='$u_id';";
+    $check = mysqli_query($connect, $querry);
+    if (mysqli_num_rows($check) > 0) {
+        $likeclass = "d-none";
+    }
     $sql1 = "SELECT * FROM (tags JOIN quetag ON tags.t_id=quetag.fk_t_id JOIN questions ON quetag.fk_q_id=questions.q_id) LEFT JOIN users ON questions.fk_u_id=users.u_id WHERE q_id='$q_id'; ";
     $res1 = mysqli_query($connect, $sql1);
     $data1 = mysqli_fetch_assoc($res1);
@@ -113,7 +118,7 @@ if (!isset($_GET["id"])) {
             <h6>Posted by <?php echo $val; ?></h6>
             <p>Date: <?php echo $q_date; ?></p>
             <button id="like-btn" class="btn btn-primary <?php echo $likeclass; ?>">Like</button>
-            <button id="dislike-btn" class="btn btn-secondary">Dislike</button>
+            <button id="dislike-btn" class="btn btn-secondary <?php echo $likeclass; ?>">Dislike</button>
         </div>
         <hr>
         <div class="mz-answers">
@@ -155,7 +160,10 @@ if (!isset($_GET["id"])) {
             request.onload = function() {
                 if (this.status == 200) {
                     let val = this.responseText;
-                    document.getElementsByClassName("q-vote")[0].innerHTML = "Votes: " + val;
+                    if (val !== "") {
+                        document.getElementsByClassName("q-vote")[0].innerHTML = "Votes: " + val;
+                    }
+                    dislikebtn.style.display = "none";
                     likebtn.style.display = "none";
                 }
             }
@@ -175,8 +183,8 @@ if (!isset($_GET["id"])) {
                     let val = this.responseText;
                     if (val !== "") {
                         document.getElementsByClassName("q-vote")[0].innerHTML = "Votes: " + val;
-                        console.log(val);
                     }
+                    likebtn.style.display = "none";
                     dislikebtn.style.display = "none";
                 }
             }

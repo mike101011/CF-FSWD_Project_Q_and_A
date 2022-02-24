@@ -27,6 +27,16 @@ if ((isset($_POST["val"])) && (isset($_POST["q_id"]))) {
             $sql_1 = "SELECT * FROM questions WHERE q_id='$q_id';";
             $res1 = mysqli_query($connect, $sql_1);
             $data = mysqli_fetch_assoc($res1);
+            $author = $data["fk_u_id"];
+            if ($val == "1") {
+                $sql4 = "SELECT * FROM users WHERE u_id='$author';";
+                $res4 = mysqli_query($connect, $sql4);
+                $data2 = mysqli_fetch_assoc($res4);
+                $points = $data2["points"];
+                $points++;
+                $sql5 = "UPDATE users SET points='$points' WHERE u_id='$author';";
+                mysqli_query($connect, $sql5);
+            }
             $val = $val + $data["q_vote"];
             $sql2 = "UPDATE `questions` SET `q_vote` = '$val' WHERE q_id = '$q_id'; ";
             if (mysqli_query($connect, $sql2)) {
