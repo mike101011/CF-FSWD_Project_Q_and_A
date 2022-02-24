@@ -10,6 +10,12 @@ if (!isset($_GET["id"])) {
 } else {
     require_once "../components/db_connect.php";
     $q_id = $_GET["id"];
+    if (isset($_SESSION["adm"])) {
+        $u_id = $_SESSION["adm"];
+    } else {
+        $u_id = $_SESSION["user"];
+    }
+    $likeclass = "";
     $sql1 = "SELECT * FROM (tags JOIN quetag ON tags.t_id=quetag.fk_t_id JOIN questions ON quetag.fk_q_id=questions.q_id) LEFT JOIN users ON questions.fk_u_id=users.u_id WHERE q_id='$q_id'; ";
     $res1 = mysqli_query($connect, $sql1);
     $data1 = mysqli_fetch_assoc($res1);
@@ -19,6 +25,9 @@ if (!isset($_GET["id"])) {
     $q_vote = $data1["q_vote"];
     if ($data1["fk_u_id"]) {
         $val = $data1["l_name"] . "-" . $data1["fk_u_id"];
+        if ($data1["fk_u_id"] == $u_id) {
+            $likeclass = "d-none";
+        }
     } else {
         $val = "Fromer user";
     }
@@ -97,12 +106,14 @@ if (!isset($_GET["id"])) {
             <span class="<?php echo $resclass; ?>"><?php echo $val2; ?></span>
         </div>
         <div>
-            <h5 class="text-right">Votes: <?php echo $q_vote; ?></h5>
+            <h5 class="text-right q-vote">Votes: <?php echo $q_vote; ?></h5>
             <?php echo $q_txt; ?>
         </div>
         <div class="question-bottom">
             <h6>Posted by <?php echo $val; ?></h6>
             <p>Date: <?php echo $q_date; ?></p>
+            <button id="like-btn" class="btn btn-primary <?php echo $likeclass; ?>">Like</button>
+            <button id="dislike-btn" class="btn btn-secondary">Dislike</button>
         </div>
         <hr>
         <div class="mz-answers">
@@ -132,6 +143,45 @@ if (!isset($_GET["id"])) {
     </div>
 
     <script>
+        let likebtn = document.getElementById("like-btn");
+        likebtn.addEventListener("click", likequest);
+
+        function likequest() {
+            let q_id = <?php echo $q_id; ?>;
+            let params = `val=1&&q_id=${q_id}`;
+            let request = new XMLHttpRequest();
+            request.open("POST", "../process/like.php", true);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.onload = function() {
+                if (this.status == 200) {
+                    let val = this.responseText;
+                    document.getElementsByClassName("q-vote")[0].innerHTML = "Votes: " + val;
+                    likebtn.style.display = "none";
+                }
+            }
+            request.send(params);
+        }
+        let dislikebtn = document.getElementById("dislike-btn");
+        dislikebtn.addEventListener("click", disquest);
+
+        function disquest() {
+            let q_id = <?php echo $q_id; ?>;
+            let params = `val=-1&&q_id=${q_id}`;
+            let request = new XMLHttpRequest();
+            request.open("POST", "../process/like.php", true);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.onload = function() {
+                if (this.status == 200) {
+                    let val = this.responseText;
+                    if (val !== "") {
+                        document.getElementsByClassName("q-vote")[0].innerHTML = "Votes: " + val;
+                        console.log(val);
+                    }
+                    dislikebtn.style.display = "none";
+                }
+            }
+            request.send(params);
+        }
         let form = document.getElementById("comment-form");
         form.addEventListener("submit", commentfct);
 
