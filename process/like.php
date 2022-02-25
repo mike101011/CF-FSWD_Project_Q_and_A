@@ -21,6 +21,12 @@ if ((isset($_POST["val"])) && (isset($_POST["q_id"]))) {
     if (mysqli_num_rows($check) > 0) {
         $error = true;
     }
+    $querry2 = "SELECT * FROM questions WHERE q_id='$q_id';";
+    $check2 = mysqli_query($connect, $querry2);
+    $result = mysqli_fetch_assoc($check2);
+    if ($result["fk_u_id"] == $u_id) {
+        $error = true;
+    }
     if (!$error) {
         $sql3 = "INSERT INTO vote_details(fk_q_id,fk_u_id,val) VALUES('$q_id','$u_id','$val');";
         if (mysqli_query($connect, $sql3)) {

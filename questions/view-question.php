@@ -43,31 +43,47 @@ if (!isset($_GET["id"])) {
         $val2 = "Open";
         $resclass = "";
     }
-    $standardclass = $answerclass = "d-none";
     $standbdy = $answbdy = "";
+    $querry2 = "SELECT * FROM questions WHERE q_id='$q_id';";
+    $check2 = mysqli_query($connect, $querry2);
+    $result = mysqli_fetch_assoc($check2);
     $sql2 = "SELECT * FROM answers LEFT JOIN users on answers.fk_u_id=u_id WHERE answers.fk_q_id='$q_id' AND a_resolve='0' ORDER BY a_id DESC;";
     $res2 = mysqli_query($connect, $sql2);
     if ($res2->num_rows > 0) {
         $standardclass = "";
+        $standbdy = "<h4>Comments</h4>";
         while ($row = mysqli_fetch_assoc($res2)) {
             if ($row["fk_u_id"]) {
                 $val3 = $row["l_name"] . "-" . $row["fk_u_id"];
             } else {
                 $val3 = "Fromer user";
             }
-            $standbdy .= "<div>
+
+            if ($result["fk_u_id"] == $u_id) {
+                $standbdy .= "<div>
+                <div class='txt'>" . $row["a_text"] . "</div>
+                <div class='txt-info'>
+                    <h6>By " . $val3 . "</h6> 
+                    <p>Posted on " . $row["a_date"] . "</p>
+                </div>
+                <a href='../process/accept.php?a_id=" . $row["a_id"] . "' class='btn btn-success'>Accept</a>
+            </div>";
+            } else {
+                $standbdy .= "<div>
                 <div class='txt'>" . $row["a_text"] . "</div>
                 <div class='txt-info'>
                     <h6>By " . $val3 . "</h6> 
                     <p>Posted on " . $row["a_date"] . "</p>
                 </div>
             </div>";
+            }
         }
     }
     $sql3 = "SELECT * FROM answers LEFT JOIN users on answers.fk_u_id=u_id WHERE answers.fk_q_id='$q_id' AND a_resolve='1' ORDER BY a_id DESC;";
     $res3 = mysqli_query($connect, $sql3);
     if ($res3->num_rows > 0) {
         $answerclass = "";
+        $answbdy = "<h4>Answers</h4>";
         while ($row3 = mysqli_fetch_assoc($res3)) {
             if ($row3["fk_u_id"]) {
                 $val4 = $row3["l_name"] . "-" . $row3["fk_u_id"];
@@ -85,6 +101,7 @@ if (!isset($_GET["id"])) {
         }
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -97,7 +114,7 @@ if (!isset($_GET["id"])) {
     <?php require_once "../components/boot-css.php"; ?>
     <style>
         #comments {
-            height: 15rem;
+            max-height: 15rem;
             overflow-y: scroll;
             margin-bottom: 1em;
         }
@@ -122,29 +139,27 @@ if (!isset($_GET["id"])) {
         </div>
         <hr>
         <div class="mz-answers">
-            <div class="<?php echo $answerclass; ?>">
-                <h4>Answers</h4>
-                <?php echo $answbdy; ?>
-            </div>
-            <div class="<?php echo $standardclass; ?>">
-                <h4>Comments</h4>
-                <div id="comments"><?php echo $standbdy; ?></div>
-            </div>
-            <hr>
-            <div>
-                <h4>Post Comment</h4>
-                <form id="comment-form" method="post" enctype="multipart/form-data">
-                    <fieldset>
-                        <div>
-                            <textarea id="comment-area" name="a_text" cols="40" rows="15" placeholder="Comment here"></textarea>
-                        </div>
-                        <input type="hidden" id="question" name="q_id" value="<?php echo $q_id; ?>">
-                        <button type="submit" name="submit" class="btn btn-secondary">Post</button>
-
-                    </fieldset>
-                </form>
-            </div>
+            <?php echo $answbdy; ?>
         </div>
+
+        <div id="comments"><?php echo $standbdy; ?></div>
+
+        <hr>
+        <div>
+            <h4>Post Comment</h4>
+            <form id="comment-form" method="post" enctype="multipart/form-data">
+                <fieldset>
+                    <div>
+                        <textarea id="comment-area" name="a_text" cols="40" rows="15" placeholder="Comment here"></textarea>
+                    </div>
+                    <input type="hidden" id="question" name="q_id" value="<?php echo $q_id; ?>">
+                    <button type="submit" class="btn btn-secondary">Post</button>
+
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
     </div>
 
     <script>
@@ -207,6 +222,7 @@ if (!isset($_GET["id"])) {
                 request.onload = function() {
                     if (this.status == 200) {
                         document.getElementById("comments").innerHTML = this.responseText;
+
 
                     }
                 }

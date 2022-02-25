@@ -11,7 +11,7 @@ if (isset($_SESSION["adm"])) {
     $u_id = $_SESSION["user"];
 }
 $error = false;
-$standbdy = "";
+$standbdy = "<h4>Comments</h4>";
 if ((isset($_POST["a_text"])) && (isset($_POST["q_id"]))) {
     $q_id = mysqli_real_escape_string($connect, $_POST['q_id']);
     $a_text = mysqli_real_escape_string($connect, $_POST['a_text']);
@@ -37,6 +37,7 @@ if ((isset($_POST["a_text"])) && (isset($_POST["q_id"]))) {
                     <h6>By " . $val . "</h6> 
                     <p>Posted on " . $row["a_date"] . "</p>
                 </div>
+                <a href='../process/accept.php?a_id=" . $row["a_id"] . "' class='btn btn-success'>Accept</a>
             </div>";
                 }
             }
