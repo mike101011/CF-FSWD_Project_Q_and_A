@@ -23,6 +23,10 @@ if ((isset($_POST["a_text"])) && (isset($_POST["q_id"]))) {
         $querry = "INSERT INTO answers(a_text, fk_q_id,fk_u_id,a_date) VALUES('$a_text','$q_id','$u_id','$date');";
         if (mysqli_query($connect, $querry)) {
             $sql = "SELECT * FROM answers LEFT JOIN users on answers.fk_u_id=u_id WHERE answers.fk_q_id='$q_id' AND a_resolve='0' ORDER BY a_id DESC;";
+            $sql2 = "SELECT * FROM questions WHERE q_id='$q_id';";
+            $result = mysqli_query($connect, $sql2);
+            $data = mysqli_fetch_assoc($result);
+            $asker = $data["fk_u_id"];
             $res = mysqli_query($connect, $sql);
             if ($res->num_rows > 0) {
                 while ($row = mysqli_fetch_assoc($res)) {
@@ -31,7 +35,8 @@ if ((isset($_POST["a_text"])) && (isset($_POST["q_id"]))) {
                     } else {
                         $val = "Fromer user";
                     }
-                    $standbdy .= "<div>
+                    if ($asker == $u_id) {
+                        $standbdy .= "<div>
                 <div class='txt'>" . $row["a_text"] . "</div>
                 <div class='txt-info'>
                     <h6>By " . $val . "</h6> 
@@ -39,6 +44,15 @@ if ((isset($_POST["a_text"])) && (isset($_POST["q_id"]))) {
                 </div>
                 <a href='../process/accept.php?a_id=" . $row["a_id"] . "' class='btn btn-success'>Accept</a>
             </div>";
+                    } else {
+                        $standbdy .= "<div>
+                <div class='txt'>" . $row["a_text"] . "</div>
+                <div class='txt-info'>
+                    <h6>By " . $val . "</h6> 
+                    <p>Posted on " . $row["a_date"] . "</p>
+                </div>
+            </div>";
+                    }
                 }
             }
             echo $standbdy;
