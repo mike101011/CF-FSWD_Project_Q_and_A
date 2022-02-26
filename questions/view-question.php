@@ -90,14 +90,26 @@ if (!isset($_GET["id"])) {
             } else {
                 $val4 = "Fromer user";
             }
-            $answbdy
-                .= "<div>
+            if ($result["fk_u_id"] == $u_id) {
+                $answbdy
+                    .= "<div>
+                <div class='txt'>" . $row3["a_text"] . "</div>
+                <div class='txt-info'>
+                    <h6>By " . $val4 . "</h6> 
+                    <p>Posted on " . $row3["a_date"] . "</p>
+                </div>
+                <a href='../process/reject.php?a_id=" . $row3["a_id"] . "' class='btn btn-warning'>Reject</a>
+            </div>";
+            } else {
+                $answbdy
+                    .= "<div>
                 <div class='txt'>" . $row3["a_text"] . "</div>
                 <div class='txt-info'>
                     <h6>By " . $val4 . "</h6> 
                     <p>Posted on " . $row3["a_date"] . "</p>
                 </div>
             </div>";
+            }
         }
     }
 }

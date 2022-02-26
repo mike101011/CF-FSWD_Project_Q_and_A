@@ -28,22 +28,22 @@ if (!isset($_GET["a_id"])) {
         header("Location: ../questions/view-question.php?id=" . $data["q_id"] . "");
         exit;
     }
-    if ($a_resolve == 1) {
+    if ($a_resolve == 0) {
         $error = true;
         header("Location: ../questions/view-question.php?id=" . $data["q_id"] . "");
         exit;
     }
     if (!$error) {
-        $sql2 = "UPDATE answers SET a_resolve='1' WHERE a_id='$a_id';";
+        $sql2 = "UPDATE answers SET a_resolve='0' WHERE a_id='$a_id';";
         if (mysqli_query($connect, $sql2)) {
             $sql3 = "SELECT * FROM users WHERE u_id='$answ';";
             $res3 = mysqli_query($connect, $sql3);
             $data2 = mysqli_fetch_assoc($res3);
             $points = $data2["points"];
-            $points++;
+            $points--;
             $sql4 = "UPDATE users SET points='$points' WHERE u_id='$answ';";
             if (mysqli_query($connect, $sql4)) {
-                $sql5 = "UPDATE questions SET q_resolved='1' WHERE q_id='$q_id';";
+                $sql5 = "UPDATE questions SET q_resolved='0' WHERE q_id='$q_id';";
                 if (mysqli_query($connect, $sql5)) {
                     header("Location: ../questions/view-question.php?id=" . $data["q_id"] . "");
                 }
