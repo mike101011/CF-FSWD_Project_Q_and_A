@@ -23,6 +23,54 @@ if (!isset($_GET["q_id"])) {
     $q_txt = $data["q_txt"];
     $title = $data["title"];
     $titleError = $txtError = $tagError = "";
+    $error = false;
+    if (isset($_POST["submit"])) {
+        $q_title = $_POST["title"];
+        $q_txt = $_POST["q_txt"];
+        $title = $_POST["tag"];
+        switch (true) {
+            case (empty($q_title)):
+
+                $titleError = "Question must have a title.";
+                break;
+            case (empty($q_txt)):
+
+                $txtError = "Please formulate your question.";
+                break;
+            case (empty($title)):
+                $tagError = "Please choose a tag.";
+                break;
+
+
+            default:
+
+
+                $sql2 = "UPDATE questions SET q_title='$q_title', q_txt='$q_txt' WHERE q_id='$q_id';";
+                mysqli_query($connect, $sql2);
+                if ($title !== $data["title"]) {
+                    $sql3 = "SELECT * FROM tags WHERE title='$title';";
+                    $res3 = mysqli_query($connect, $sql3);
+                    if (mysqli_num_rows($res3) > 0) {
+                        $data3 = mysqli_fetch_assoc($res3);
+                        $t_id = $data3["t_id"];
+                        $sql4 = "UPDATE quetag SET fk_t_id='$t_id' WHERE fk_q_id='$q_id';";
+                        mysqli_query($connect, $sql4);
+                    } else {
+                        $sql5 = "INSERT INTO tags(title) VALUES('$title')";
+                        mysqli_query($connect, $sql5);
+                        $sql5 = "SELECT * FROM tags WHERE title='$title';";
+                        $res5 = mysqli_query($connect, $sql5);
+                        $data5 = mysqli_fetch_assoc($res5);
+                        $t_id = $data5["t_id"];
+                        $sql5 = "DELETE FROM quetag WHERE quetag.fk_q_id='$q_id';";
+                        mysqli_query($connect, $sql5);
+                        $sql5 = "INSERT INTO quetag(fk_q_id,fk_t_id) VALUES('$q_id','$t_id');";
+                        mysqli_query($connect, $sql5);
+                    }
+                }
+                break;
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
