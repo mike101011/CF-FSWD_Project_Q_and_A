@@ -29,6 +29,12 @@ if (isset($_GET["q_id"])) {
     $q_date = $data["q_date"];
     $q_vote = $data["q_vote"];
     $tag = $data["title"];
+    if (isset($_SESSION["user"])) {
+        if ((!$data["fk_u_id"]) || ($u_id !== $data["fk_u_id"])) {
+            header("Location: ../users/" . $address);
+            exit;
+        }
+    }
     if ($data["fk_u_id"]) {
         $val = $data["l_name"] . "-" . $data["fk_u_id"];
         if ($data["fk_u_id"] == $u_id) {
@@ -53,6 +59,25 @@ if (isset($_GET["q_id"])) {
         } else {
             echo "Error!";
         }
+    }
+}
+if (isset($_GET["a_id"])) {
+    $a_id = $_GET["a_id"];
+    $sql = "SELECT * FROM answers WHERE a_id='$a_id';";
+    $res = mysqli_query($connect, $sql);
+    $data = mysqli_fetch_assoc($res);
+    $q_id = $data["fk_q_id"];
+    if (isset($_SESSION["user"])) {
+        if ((!$data["fk_u_id"]) || ($u_id !== $data["fk_u_id"])) {
+            header("Location: view-question.php?id=" . $q_id);
+            exit;
+        }
+    }
+    $sql = "DELETE FROM answers WHERE a_id='$a_id';";
+    if (mysqli_query($connect, $sql)) {
+        header("Location: view-question.php?id=" . $q_id);
+    } else {
+        echo "Error!";
     }
 }
 ?>
