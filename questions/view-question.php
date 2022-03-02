@@ -58,7 +58,11 @@ if (!isset($_GET["id"])) {
             } else {
                 $val3 = "Fromer user";
             }
-
+            if ((isset($_SESSION["adm"])) || ((isset($_SESSION["user"])) && ($row["fk_u_id"] == $u_id))) {
+                $anscode = "<a href='delete.php?a_id=" . $row["a_id"] . "' class='btn btn-danger'>Delete</a>";
+            } else {
+                $anscode = "";
+            }
             if ($result["fk_u_id"] == $u_id) {
                 $standbdy .= "<div>
                 <div class='txt'>" . $row["a_text"] . "</div>
@@ -66,7 +70,7 @@ if (!isset($_GET["id"])) {
                     <h6>By " . $val3 . "</h6> 
                     <p>Posted on " . $row["a_date"] . "</p>
                 </div>
-                <a href='../process/accept.php?a_id=" . $row["a_id"] . "' class='btn btn-success'>Accept</a>
+                <a href='../process/accept.php?a_id=" . $row["a_id"] . "' class='btn btn-success'>Accept</a>" . $anscode . "
             </div>";
             } else {
                 $standbdy .= "<div>
@@ -74,7 +78,7 @@ if (!isset($_GET["id"])) {
                 <div class='txt-info'>
                     <h6>By " . $val3 . "</h6> 
                     <p>Posted on " . $row["a_date"] . "</p>
-                </div>
+                </div>" . $anscode . "
             </div>";
             }
         }

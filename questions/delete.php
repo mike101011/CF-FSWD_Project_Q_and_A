@@ -55,7 +55,7 @@ if (isset($_GET["q_id"])) {
         if (mysqli_query($connect, $sql)) {
             $class = "d-none";
             echo "Success!";
-            header("Location:../users/" . $address);
+            header("Refresh:1; url=../users/" . $address);
         } else {
             echo "Error!";
         }
@@ -108,7 +108,7 @@ if (isset($_GET["a_id"])) {
         <hr>
         <form method="post" enctype="multipart/form-data">
             <button name="submit" class="btn btn-danger">Proceed</button>
-            <a href="" class="btn btn-warning">No, go back</a>
+            <a href="../users/<?php echo $address; ?>" class="btn btn-warning">No, go back</a>
         </form>
 
     </div>
