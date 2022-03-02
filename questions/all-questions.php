@@ -27,7 +27,7 @@ if ($res->num_rows > 0) {
             $val2 = "Open";
             $resclass = "";
         }
-        if (isset($_SESSION["adm"])) {
+        if ((isset($_SESSION["adm"])) || ($u_id == $row["fk_u_id"])) {
             $questionbdy .= "<div class='mz-question'>
         <h3>" . $row["q_title"] . "</h3>
         <h4>Tag: " . $row["title"] . "</h4>
@@ -36,6 +36,7 @@ if ($res->num_rows > 0) {
         <h5>By " . $val . "</h5>
         <a href='view-question.php?id=" . $row["q_id"] . "' class='btn btn-primary'>View</a>
         <a href='edit-question.php?q_id=" . $row["q_id"] . "' class='btn btn-warning'>Edit</a>
+        <a href='delete.php?q_id=" . $row["q_id"] . "' class='btn btn-danger'>Delete</a>
 <hr>
         </div>";
         } else {

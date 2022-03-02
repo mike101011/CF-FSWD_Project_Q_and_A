@@ -51,16 +51,17 @@ if (isset($_GET["q_id"])) {
         $resclass = "";
     }
     if (isset($_POST["submit"])) {
-        $sql = "DELETE * FROM questions WHERE q_id='$q_id';";
+        $sql = "DELETE FROM questions WHERE q_id='$q_id';";
         if (mysqli_query($connect, $sql)) {
             $class = "d-none";
             echo "Success!";
-            header("Location: refresh:1;url=../users/" . $address);
+            header("Location:../users/" . $address);
         } else {
             echo "Error!";
         }
     }
 }
+
 if (isset($_GET["a_id"])) {
     $a_id = $_GET["a_id"];
     $sql = "SELECT * FROM answers WHERE a_id='$a_id';";

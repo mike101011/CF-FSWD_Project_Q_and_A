@@ -123,6 +123,7 @@ if (!isset($_GET["q_id"])) {
                 </fieldset>
                 <button type="submit" class="btn btn-secondary" name="submit"> Post!</button>
             </form>
+            <a href="delete.php?q_id=<?php echo $q_id; ?>" class="btn btn-danger">Delete</a>
         </div>
 
     </div>
