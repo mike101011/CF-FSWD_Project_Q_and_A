@@ -23,20 +23,25 @@ if (!isset($_GET["id"])) {
     }
     $sql1 = "SELECT * FROM (tags JOIN quetag ON tags.t_id=quetag.fk_t_id JOIN questions ON quetag.fk_q_id=questions.q_id) LEFT JOIN users ON questions.fk_u_id=users.u_id WHERE q_id='$q_id'; ";
     $res1 = mysqli_query($connect, $sql1);
-    $data1 = mysqli_fetch_assoc($res1);
-    $title = $data1["q_title"];
-    $q_txt = $data1["q_txt"];
-    $q_date = $data1["q_date"];
-    $q_vote = $data1["q_vote"];
-    if ($data1["fk_u_id"]) {
-        $val = $data1["l_name"] . "-" . $data1["fk_u_id"];
-        if ($data1["fk_u_id"] == $u_id) {
+    $data1 = $res1->fetch_all(MYSQLI_ASSOC);
+    $title = $data1[0]["q_title"];
+    $q_txt = $data1[0]["q_txt"];
+    $q_date = $data1[0]["q_date"];
+    $q_vote = $data1[0]["q_vote"];
+    $tagbdy = "";
+    for ($i = 0; $i < count($data1); $i++) {
+        $value = $data1[$i]["title"];
+        $tagbdy .= "<span>" . $value . "</span>";
+    }
+    if ($data1[0]["fk_u_id"]) {
+        $val = $data1[0]["l_name"] . "-" . $data1[0]["fk_u_id"];
+        if ($data1[0]["fk_u_id"] == $u_id) {
             $likeclass = "d-none";
         }
     } else {
         $val = "Fromer user";
     }
-    if ($data1["q_resolved"] == 1) {
+    if ($data1[0]["q_resolved"] == 1) {
         $val2 = "Answered";
         $resclass = "resolved";
     } else {
@@ -147,6 +152,7 @@ if (!isset($_GET["id"])) {
             <h5 class="text-right q-vote">Votes: <?php echo $q_vote; ?></h5>
             <?php echo $q_txt; ?>
         </div>
+        <div class="tags">Tags: <?php echo $tagbdy; ?></div>
         <div class="question-bottom">
             <h6>Posted by <?php echo $val; ?></h6>
             <p>Date: <?php echo $q_date; ?></p>

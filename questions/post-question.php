@@ -14,7 +14,9 @@ if ((!isset($_SESSION["adm"])) && (!isset($_SESSION["user"]))) {
         }
         $title = $_POST["title"];
         $txt = $_POST["q_txt"];
-        $tag = $_POST["tag"];
+        $tag1 = $_POST["tag1"];
+        $tag2 = $_POST["tag2"];
+        $tag3 = $_POST["tag3"];
         switch (true) {
             case (empty($title)):
 
@@ -24,7 +26,7 @@ if ((!isset($_SESSION["adm"])) && (!isset($_SESSION["user"]))) {
 
                 $txtError = "Please formulate your question.";
                 break;
-            case (empty($tag)):
+            case ((empty($tag1)) && (empty($tag2)) && (empty($tag3))):
                 $tagError = "Please choose a tag.";
                 break;
 
@@ -38,27 +40,34 @@ if ((!isset($_SESSION["adm"])) && (!isset($_SESSION["user"]))) {
                 $resq = mysqli_query($connect, $sql2);
                 $dataq = mysqli_fetch_assoc($resq);
                 $q_id = $dataq["q_id"];
+                $tags = array();
+                for ($i = 1; $i < 4; $i++) {
+                    $tag = $_POST["tag" . $i];
+                    if (!in_array($tag, $tags)) {
+                        array_push($tags, $tag);
+                    }
+                }
                 $tag_id = "";
-                $taqquer = "SELECT * FROM tags WHERE title='$tag';";
-                $res = mysqli_query($connect, $taqquer);
-                if (mysqli_num_rows($res) > 0) {
-                    $data = mysqli_fetch_assoc($res);
-                    $tag_id = $data["t_id"];
-                } else {
-                    $quer2 = "INSERT INTO tags(title) VALUES('$tag');";
-                    mysqli_query($connect, $quer2);
-                    $quer3 = "SELECT t_id FROM tags WHERE title='$tag';";
-                    $restg = mysqli_query($connect, $quer3);
-                    $datatg = mysqli_fetch_assoc($restg);
-                    $tag_id = $datatg["t_id"];
+                for ($i = 0; $i < count($tags); $i++) {
+                    $tag = $tags[$i];
+                    $taqquer = "SELECT * FROM tags WHERE title='$tag';";
+                    $res = mysqli_query($connect, $taqquer);
+                    if (mysqli_num_rows($res) > 0) {
+                        $data = mysqli_fetch_assoc($res);
+                        $tag_id = $data["t_id"];
+                    } else {
+                        $quer2 = "INSERT INTO tags(title) VALUES('$tag');";
+                        mysqli_query($connect, $quer2);
+                        $quer3 = "SELECT t_id FROM tags WHERE title='$tag';";
+                        $restg = mysqli_query($connect, $quer3);
+                        $datatg = mysqli_fetch_assoc($restg);
+                        $tag_id = $datatg["t_id"];
+                    }
+                    $sqlfinal = "INSERT INTO quetag(fk_q_id,fk_t_id) VALUES('$q_id','$tag_id');";
+                    mysqli_query($connect, $sqlfinal);
                 }
-                $sqlfinal = "INSERT INTO quetag(fk_q_id,fk_t_id) VALUES('$q_id','$tag_id');";
-                $resfinal = mysqli_query($connect, $sqlfinal);
-                if ($resfinal) {
-                    echo "question posted!";
-                } else {
-                    echo "Something went wrong.";
-                }
+
+
                 break;
         }
     }
@@ -89,7 +98,7 @@ if ((!isset($_SESSION["adm"])) && (!isset($_SESSION["user"]))) {
         <div>
             <form method="post" enctype="multipart/form-data">
                 <fieldset>
-                    <table class="table">
+                    <table class="table" id="form-table">
                         <tr>
                             <th>Title</th>
                             <td>
@@ -105,19 +114,45 @@ if ((!isset($_SESSION["adm"])) && (!isset($_SESSION["user"]))) {
                             </td>
                         </tr>
                         <tr>
-                            <th>Choose one tag</th>
+                            <th></th>
                             <td>
-                                <input type="text" class="form-control" name="tag">
+                                <h5>Choose at least one tag</h5>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Tag 1</th>
+                            <td>
+                                <input type="text" class="form-control" name="tag1">
                                 <span class="text-danger"><?php echo $tagError; ?></span>
                             </td>
                         </tr>
+                        <tr>
+                            <th>Tag 2</th>
+                            <td>
+                                <input type="text" class="form-control" name="tag2">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Tag 3</th>
+                            <td>
+                                <input type="text" class="form-control" name="tag3">
+
+                            </td>
+                        </tr>
+
+
+
                     </table>
                 </fieldset>
                 <button type="submit" class="btn btn-secondary" name="submit"> Post!</button>
             </form>
+
         </div>
 
     </div>
+
 </body>
 
 </html>
