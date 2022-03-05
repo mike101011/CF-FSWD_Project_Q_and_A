@@ -22,24 +22,25 @@ if (!isset($_GET["q_id"])) {
     $q_title = $data[0]["q_title"];
     $q_txt = $data[0]["q_txt"];
     $title0 = $data[0]["title"];
-    if ($data[1]["title"]) {
+
+    if (count($data) >= 2) {
         $title1 = $data[1]["title"];
     } else {
-        $title1 = "";
+        $title1 = null;
     }
-    if ($data[2]["title"]) {
+    if (count($data) == 3) {
         $title2 = $data[2]["title"];
     } else {
-        $title2 = "";
+        $title2 = null;
     }
     $titleError = $txtError = $tagError = "";
     $error = false;
     if (isset($_POST["submit"])) {
         $q_title = $_POST["title"];
         $q_txt = $_POST["q_txt"];
-        $title1 = $_POST["tag1"];
-        $title2 = $_POST["tag2"];
-        $title3 = $_POST["tag3"];
+        $title0 = $_POST["tag1"];
+        $title1 = $_POST["tag2"];
+        $title2 = $_POST["tag3"];
         switch (true) {
             case (empty($q_title)):
 
@@ -49,7 +50,7 @@ if (!isset($_GET["q_id"])) {
 
                 $txtError = "Please formulate your question.";
                 break;
-            case ((empty($title1)) && (empty($title2)) && (empty($title3))):
+            case ((empty($title0)) && (empty($title1)) && (empty($title2))):
                 $tagError = "Please choose a tag.";
                 break;
 
@@ -58,7 +59,7 @@ if (!isset($_GET["q_id"])) {
                 $tags = array();
                 for ($i = 1; $i < 4; $i++) {
                     $tag = $_POST["tag" . $i];
-                    if (!in_array($tag, $tags)) {
+                    if ((!empty($tag)) && (!in_array($tag, $tags))) {
                         array_push($tags, $tag);
                     }
                 }
@@ -66,7 +67,7 @@ if (!isset($_GET["q_id"])) {
                 $sql2 = "UPDATE questions SET q_title='$q_title', q_txt='$q_txt' WHERE q_id='$q_id';";
                 mysqli_query($connect, $sql2);
                 $sql = "DELETE FROM quetag WHERE fk_q_id='$q_id';";
-                mysqli_query($connect, $sql2);
+                mysqli_query($connect, $sql);
                 $tag_id = "";
                 for ($i = 0; $i < count($tags); $i++) {
                     $tag = $tags[$i];

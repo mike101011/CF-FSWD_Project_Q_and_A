@@ -23,27 +23,30 @@ if (isset($_GET["q_id"])) {
     $class = $userclass = "";
     $sql = "SELECT * FROM (tags JOIN quetag ON tags.t_id=quetag.fk_t_id JOIN questions ON quetag.fk_q_id=questions.q_id) LEFT JOIN users ON questions.fk_u_id=users.u_id WHERE q_id='$q_id';";
     $res = mysqli_query($connect, $sql);
-    $data = mysqli_fetch_assoc($res);
-    $title = $data["q_title"];
-    $q_txt = $data["q_txt"];
-    $q_date = $data["q_date"];
-    $q_vote = $data["q_vote"];
-    $tag = $data["title"];
+    $data = $res->fetch_all(MYSQLI_ASSOC);
+    $title = $data[0]["q_title"];
+    $q_txt = $data[0]["q_txt"];
+    $q_date = $data[0]["q_date"];
+    $q_vote = $data[0]["q_vote"];
+    $tag = "";
+    for ($i = 0; $i < count(($data)); $i++) {
+        $tag .= "<span>" . $data[$i]["title"] . "</span>";
+    }
     if (isset($_SESSION["user"])) {
-        if ((!$data["fk_u_id"]) || ($u_id !== $data["fk_u_id"])) {
+        if ((!$data[0]["fk_u_id"]) || ($u_id !== $data[0]["fk_u_id"])) {
             header("Location: ../users/" . $address);
             exit;
         }
     }
-    if ($data["fk_u_id"]) {
-        $val = $data["l_name"] . "-" . $data["fk_u_id"];
-        if ($data["fk_u_id"] == $u_id) {
+    if ($data[0]["fk_u_id"]) {
+        $val = $data[0]["l_name"] . "-" . $data[0]["fk_u_id"];
+        if ($data[0]["fk_u_id"] == $u_id) {
             $userclass = "d-none";
         }
     } else {
         $val = "Fromer user";
     }
-    if ($data["q_resolved"] == 1) {
+    if ($data[0]["q_resolved"] == 1) {
         $val2 = "Answered";
         $resclass = "resolved";
     } else {
@@ -104,7 +107,7 @@ if (isset($_GET["a_id"])) {
             <h5 class="text-right q-vote">Votes: <?php echo $q_vote; ?></h5>
             <?php echo $q_txt; ?>
         </div>
-        <h6>Tag: <?php echo $tag; ?></h6>
+        <h6>Tags: <?php echo $tag; ?></h6>
         <hr>
         <form method="post" enctype="multipart/form-data">
             <button name="submit" class="btn btn-danger">Proceed</button>

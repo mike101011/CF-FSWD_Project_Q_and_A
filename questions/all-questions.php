@@ -11,10 +11,17 @@ $questionbdy = $msg = "";
 $quesall = "";
 $quesdet = "d-none";
 $class = "d-none";
-$sql = "SELECT * FROM (tags JOIN quetag ON tags.t_id=quetag.fk_t_id JOIN questions ON quetag.fk_q_id=questions.q_id) LEFT JOIN users ON questions.fk_u_id=users.u_id ORDER BY q_id DESC; ";
+$sql = "SELECT * FROM questions LEFT JOIN users ON questions.fk_u_id=users.u_id ORDER BY q_id DESC; ";
 $res = mysqli_query($connect, $sql);
 if ($res->num_rows > 0) {
     while ($row = mysqli_fetch_assoc($res)) {
+        $id_val = $row["q_id"];
+        $tagbdy = "";
+        $query = "SELECT * FROM tags JOIN quetag ON tags.t_id=quetag.fk_t_id JOIN questions ON quetag.fk_q_id=questions.q_id WHERE q_id='$id_val';";
+        $result = mysqli_query($connect, $query);
+        while ($line = mysqli_fetch_assoc($result)) {
+            $tagbdy .= "<span>" . $line["title"] . "</span>";
+        }
         if ($row["fk_u_id"]) {
             $val = $row["l_name"] . "-" . $row["fk_u_id"];
         } else {
@@ -30,7 +37,7 @@ if ($res->num_rows > 0) {
         if ((isset($_SESSION["adm"])) || ($u_id == $row["fk_u_id"])) {
             $questionbdy .= "<div class='mz-question'>
         <h3>" . $row["q_title"] . "</h3>
-        <h4>Tag: " . $row["title"] . "</h4>
+        <h4>Tags: " . $tagbdy . "</h4>
         <h5>" . $row["q_vote"] . "</h5>
         <h5 class='" . $resclass . "'>" . $val2 . "</h5>
         <h5>By " . $val . "</h5>
@@ -44,7 +51,7 @@ if ($res->num_rows > 0) {
 
             $questionbdy .= "<div class='mz-question'>
         <h3>" . $row["q_title"] . "</h3>
-        <h4>Tag: " . $row["title"] . "</h4>
+        <h4>Tags: " . $tagbdy . "</h4>
         <h5>" . $row["q_vote"] . "</h5>
         <h5 class='" . $resclass . "'>" . $val2 . "</h5>
         <h5>By " . $val . "</h5>
@@ -67,10 +74,17 @@ if (isset($_GET["user"])) {
         $quesdet = "";
         $class = "d-none";
         $questionbdy = $msg = "";
-        $sql = "SELECT * FROM (tags JOIN quetag ON tags.t_id=quetag.fk_t_id JOIN questions ON quetag.fk_q_id=questions.q_id) LEFT JOIN users ON questions.fk_u_id=users.u_id WHERE u_id='$u_id' ORDER BY q_id DESC; ";
+        $sql = "SELECT * FROM questions LEFT JOIN users ON questions.fk_u_id=users.u_id WHERE u_id='$u_id' ORDER BY q_id DESC; ";
         $res = mysqli_query($connect, $sql);
         if ($res->num_rows > 0) {
             while ($row = mysqli_fetch_assoc($res)) {
+                $id_val = $row["q_id"];
+                $tagbdy = "";
+                $query = "SELECT * FROM tags JOIN quetag ON tags.t_id=quetag.fk_t_id JOIN questions ON quetag.fk_q_id=questions.q_id WHERE q_id='$id_val';";
+                $result = mysqli_query($connect, $query);
+                while ($line = mysqli_fetch_assoc($result)) {
+                    $tagbdy .= "<span>" . $line["title"] . "</span>";
+                }
                 if ($row["q_resolved"] == 1) {
                     $val2 = "Answered";
                     $resclass = "resolved";
@@ -81,7 +95,7 @@ if (isset($_GET["user"])) {
 
                 $questionbdy .= "<div class='mz-question'>
         <h3>" . $row["q_title"] . "</h3>
-        <h4>Tag: " . $row["title"] . "</h4>
+        <h4>Tags: " . $tagbdy . "</h4>
         <h5>" . $row["q_vote"] . "</h5>
         <h5 class='" . $resclass . "'>" . $val2 . "</h5>
         <a href='view-question.php?id=" . $row["q_id"] . "' class='btn btn-primary'>View</a>
