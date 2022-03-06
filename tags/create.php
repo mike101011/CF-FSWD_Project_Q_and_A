@@ -37,7 +37,7 @@ mysqli_close($connect);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Tag</title>
-    <?php require_once "../components/boot-css.php" ?>
+    <?php require_once "../components/boot-css.php"; ?>
     <style>
         fieldset {
             margin: auto;
@@ -60,7 +60,8 @@ mysqli_close($connect);
                     </tr>
                     <tr>
                         <th>Description (optional)</th>
-                        <textarea name="description" class="form-control" cols="15" rows="10" placeholder="Short description"></textarea>
+                        <td><textarea name="description" class="form-control" cols="15" rows="10" placeholder="Short description"></textarea></td>
+
                     </tr>
                 </table>
                 <button type="submit" name="submit" class="btn btn-secondary">Submit</button>
