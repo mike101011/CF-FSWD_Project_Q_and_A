@@ -53,6 +53,7 @@ if (isset($_SESSION["adm"])) {
         <a href="edit.php?id=<?php echo $id; ?>" class="btn btn-info">Edit your profile</a>
         <a href="../questions/post-question.php" class="btn btn-warning">Post a question</a>
         <a href="../questions/all-questions.php" class="btn btn-info">Questions</a>
+        <a href=""></a>
         <a href="logout.php" class="btn btn-secondary">Log out</a>
         <h5>Hello, <?php echo $fname . " " . $lname; ?>!</h5>
         <img src="../pictures/<?php echo $pic; ?>" alt="">

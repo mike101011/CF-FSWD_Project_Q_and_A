@@ -74,6 +74,29 @@ mysqli_close($connect);
 
         </form>
     </div>
+    <script>
+        function fib(n) {
+            if ((n == 0) || (n == 1)) {
+                return 1;
+            } else {
+                let counter_0 = 1;
+                let counter_1 = 1;
+                let v = 1;
+                let res = 1;
+                while (v < n) {
+                    res = counter_0 + counter_1;
+                    counter_0 = counter_1;
+                    counter_1 = res;
+                    v++;
+                }
+                return res;
+            }
+        }
+        for (let index = 0; index < 10; index++) {
+            console.log(fib(index));
+
+        }
+    </script>
 
 </body>
 
