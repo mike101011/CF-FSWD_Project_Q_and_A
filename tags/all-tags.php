@@ -26,6 +26,7 @@ while ($row = mysqli_fetch_assoc($res)) {
                 <blockquote class='blockquote mb-0'>
                     " . $text . "
                 </blockquote>
+                <div><a href='edit.php?t_id=" . $row["t_id"] . "' class='btn btn-warning'>Edit</a></div>
             </div>
         </div>
         </div>";

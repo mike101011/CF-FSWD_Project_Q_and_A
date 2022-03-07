@@ -16,7 +16,7 @@ if (isset($_SESSION["adm"])) {
     $lname = $data["l_name"];
     $pic = $data["picture"];
     $userbdy = "";
-    $userclass = "d-none";
+    $userclass = $postclass = "d-none";
     if (isset($_GET["Users"])) {
         $userclass = "";
         $quer = "SELECT * FROM users WHERE role='user';";
@@ -32,6 +32,30 @@ if (isset($_SESSION["adm"])) {
                         <td><a href='edit.php?id=" . $row["u_id"] . "' class='btn btn-info'>Edit</a> <a href='read.php?id=" . $row["u_id"] . "' class='btn btn-success'>Info</a> <a href='delete.php?id=" . $row["u_id"] . "' class='btn btn-danger'>Delete</a></td>
                     </tr>";
             }
+        }
+    }
+    if (isset($_GET["posts"])) {
+        $postclass = "";
+        $postbdy = "";
+        $sql = "SELECT l_name, u_id FROM users;";
+        $res = mysqli_query($connect, $sql);
+        $data = $res->fetch_all(MYSQLI_ASSOC);
+        for ($i = 0; $i < count($data); $i++) {
+            $u_id = $data[$i]["u_id"];
+            $query = "SELECT count(fk_u_id) AS ques FROM questions WHERE fk_u_id='$u_id';";
+            $result = mysqli_query($connect, $query);
+            $row = mysqli_fetch_assoc($result);
+            $questions = $row["ques"];
+            $query = "SELECT count(fk_u_id) AS ans FROM answers WHERE fk_u_id='$u_id';";
+            $result = mysqli_query($connect, $query);
+            $row = mysqli_fetch_assoc($result);
+            $answers = $row["ans"];
+            $postbdy .= "<tr>
+                        <th scope='row'>" . $data[$i]["l_name"] . "-" . $data[$i]["u_id"] . "</th>
+                        <td>" . $questions . "</td>
+                        <td>" . $answers . "</td>
+                        
+                        </tr>";
         }
     }
 }
@@ -58,6 +82,7 @@ if (isset($_SESSION["adm"])) {
         <h5>Hello, <?php echo $fname . " " . $lname; ?>!</h5>
         <img src="../pictures/<?php echo $pic; ?>" alt="">
         <a href="dashboard.php?Users" class="btn btn-warning">See Users</a>
+        <a href="dashboard.php?posts" class="btn btn-info">Post Statistics</a>
         <div class="<?php echo $userclass; ?>">
             <table class="table">
                 <thead>
@@ -72,6 +97,20 @@ if (isset($_SESSION["adm"])) {
                 </thead>
                 <tbody>
                     <?php echo $userbdy; ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="<?php echo $postclass; ?>">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">User Name</th>
+                        <th scope="col">Questions</th>
+                        <th scope="col">Answers</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php echo $postbdy; ?>
                 </tbody>
             </table>
         </div>
