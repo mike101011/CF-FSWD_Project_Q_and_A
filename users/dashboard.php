@@ -46,13 +46,18 @@ if (isset($_SESSION["adm"])) {
             $result = mysqli_query($connect, $query);
             $row = mysqli_fetch_assoc($result);
             $questions = $row["ques"];
-            $query = "SELECT count(fk_u_id) AS ans FROM answers WHERE fk_u_id='$u_id';";
+            $query = "SELECT count(fk_u_id) AS comts FROM answers WHERE fk_u_id='$u_id';";
+            $result = mysqli_query($connect, $query);
+            $row = mysqli_fetch_assoc($result);
+            $comments = $row["comts"];
+            $query = "SELECT count(fk_u_id) AS ans FROM answers WHERE fk_u_id='$u_id' AND a_resolve='1';";
             $result = mysqli_query($connect, $query);
             $row = mysqli_fetch_assoc($result);
             $answers = $row["ans"];
             $postbdy .= "<tr>
                         <th scope='row'>" . $data[$i]["l_name"] . "-" . $data[$i]["u_id"] . "</th>
                         <td>" . $questions . "</td>
+                        <td>" . $comments . "</td>
                         <td>" . $answers . "</td>
                         
                         </tr>";
@@ -106,6 +111,7 @@ if (isset($_SESSION["adm"])) {
                     <tr>
                         <th scope="col">User Name</th>
                         <th scope="col">Questions</th>
+                        <th scope="col">Comments</th>
                         <th scope="col">Answers</th>
                     </tr>
                 </thead>

@@ -8,6 +8,7 @@ if (isset($_SESSION['adm']) != "") {
 }
 require_once "components/db_connect.php";
 require_once "components/file_upload.php";
+require_once "components/functions.php";
 $email = $pass = $emailError = "";
 $errclass = "d-none";
 $error = false;
@@ -33,6 +34,7 @@ if (isset($_POST["submit-btn"])) {
                 mysqli_close($connect);
                 exit;
             }
+            checkQuestions($connect);
             if ($row["role"] == "adm") {
                 $_SESSION["adm"] = $row["u_id"];
                 header("Location: users/dashboard.php");
