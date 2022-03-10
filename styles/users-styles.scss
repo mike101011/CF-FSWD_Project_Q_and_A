@@ -1,0 +1,14 @@
+#index {
+  //see index page head section on how to implement scss!
+  background-color: aqua;
+  .login-form {
+    width: 35%;
+    margin: auto;
+    .email {
+      padding: 1em 0;
+    }
+    .password {
+      padding-bottom: 0.5em;
+    }
+  }
+}

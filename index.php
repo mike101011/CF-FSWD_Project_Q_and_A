@@ -57,22 +57,27 @@ mysqli_close($connect);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Programming Q and A</title>
+
     <?php require_once "components/boot-css.php" ?>
+    <style>
+        <?php require_once "styles/users-styles.css" ?>
+    </style>
+
 </head>
 
-<body>
+<body id="index">
     <h1 class="text-center">Welcome to Programming Q and A!</h1>
 
     <div class="container">
         <div class="<?php echo $errclass; ?> text-danger">
             <h6>Wrong credentials! Try again.</h6>
         </div>
-        <form class="w-75" method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" autocomplete="off" enctype="multipart/form-data">
-            <div> <input type="text" class="form-control" name="email" placeholder="Email">
+        <form class="login-form" method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" autocomplete="off" enctype="multipart/form-data">
+            <div class="email"> <input type="text" class="form-control" name="email" placeholder="Email">
             </div>
             <span class="text-danger"><?php echo $emailError; ?></span>
-            <div><input type="password" class="form-control" name="pass" placeholder="Password"></div>
-            <button type="submit" name="submit-btn" class="btn btn-secondary">Sign in!</button> <span>or register</span><a href="users/register.php" class="btn btn-success">Here</a>
+            <div class="password"><input type="password" class="form-control" name="pass" placeholder="Password"></div>
+            <button type="submit" name="submit-btn" class="btn btn-secondary">Sign in!</button> <span>or register </span><a href="users/register.php">Here</a>
 
         </form>
     </div>
