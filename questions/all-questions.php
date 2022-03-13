@@ -139,8 +139,30 @@ if (isset($_GET["user"])) {
             <h3 class="text-center"><?php echo $msg; ?></h3>
         </div>
         <div>
+            <form id="tag-filter" method="post" enctype="multipart/form-data">
+                <table class="table">
+                    <tr>
+                        <th>Tag 1</th>
+                        <td><input type="text" id="tag1" placeholder="Tag 1"></td>
+                    </tr>
+                    <tr>
+                        <th>Tag 2</th>
+                        <td><input type="text" id="tag2" placeholder="Tag 2"></td>
+                    </tr>
+                    <tr>
+                        <th>Tag 3</th>
+                        <td><input type="text" id="tag3" placeholder="Tag 3"></td>
+                    </tr>
+                </table>
+                <div>
+                    <button type="submit" class="btn btn-secondary">Search</button>
+                </div>
+            </form>
+        </div>
+        <div id="questions">
             <?php echo $questionbdy; ?>
         </div>
+    </div>
 
     </div>
     <div class="container <?php echo $quesdet; ?>">
@@ -148,10 +170,29 @@ if (isset($_GET["user"])) {
         <div class="<?php echo $class; ?>">
             <h3 class="text-center"><?php echo $msg; ?></h3>
         </div>
-        <div>
-            <?php echo $questionbdy; ?>
-        </div>
-    </div>
+
+        <script>
+            let frm = document.getElementById("tag-filter");
+            frm.addEventListener("submit", filterfct);
+
+            function filterfct(e) {
+                e.preventDefault();
+
+                let tag1 = document.getElementById("tag1").value;
+                let tag2 = document.getElementById("tag2").value;
+                let tag3 = document.getElementById("tag3").value;
+                let params = `tag1=${tag1}&&tag2=${tag2}&&tag3=${tag3}`;
+                let request = new XMLHttpRequest();
+                request.open("POST", "../process/tag-filter.php");
+                request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                request.onload = function() {
+                    if (this.status == 200) {
+                        document.getElementById("questions").innerHTML = this.responseText;
+                    }
+                }
+                request.send(params);
+            }
+        </script>
 </body>
 
 </html>
