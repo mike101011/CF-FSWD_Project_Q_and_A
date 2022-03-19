@@ -17,7 +17,7 @@ if ($res->num_rows > 0) {
     while ($row = mysqli_fetch_assoc($res)) {
         $id_val = $row["q_id"];
         $tagbdy = "";
-        $query = "SELECT * FROM tags JOIN quetag ON tags.t_id=quetag.fk_t_id JOIN questions ON quetag.fk_q_id=questions.q_id WHERE q_id='$id_val';";
+        $query = "SELECT title FROM tags JOIN quetag ON tags.t_id=quetag.fk_t_id WHERE fk_q_id='$id_val' ORDER BY t_id ASC; ";
         $result = mysqli_query($connect, $query);
         while ($line = mysqli_fetch_assoc($result)) {
             $tagbdy .= "<span>" . $line["title"] . "</span>";

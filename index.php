@@ -57,7 +57,8 @@ mysqli_close($connect);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Programming Q and A</title>
-
+    <link rel="stylesheet" href="https://unpkg.com/open-props" />
+    <link rel="stylesheet" href="https://unpkg.com/open-props/normalize.min.css" />
     <?php require_once "components/boot-css.php" ?>
     <style>
         <?php require_once "styles/users-styles.css" ?>
@@ -66,7 +67,25 @@ mysqli_close($connect);
 </head>
 
 <body id="index">
-    <h1 class="text-center">Welcome to Programming Q and A!</h1>
+    <header class="page-header">
+        <div class="container flow">
+            <h1 class="text-center page-title">Welcome to Programming Q and A!</h1>
+            <p class="page-subtitle"></p>
+        </div>
+    </header>
+    <h2 class="section-title"></h2>
+    <div class="media-scroller">
+        <div class="media-element"><img src="https://images.pexels.com/photos/10845119/pexels-photo-10845119.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260" alt="Error">
+            <p class="title">Short title</p>
+        </div>
+        <div class="media-element"><img src="https://images.pexels.com/photos/4974912/pexels-photo-4974912.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260" alt="Error">
+            <p class="title">Second picture</p>
+        </div>
+        <div class="media-element"><img src="https://logos-world.net/wp-content/uploads/2021/10/Python-Symbol.png" alt="Error">
+            <p class="title">Third picture</p>
+        </div>
+        <div class="media-element"></div>
+    </div>
 
     <div class="container">
         <div class="<?php echo $errclass; ?> text-danger">
@@ -99,9 +118,83 @@ mysqli_close($connect);
                 return res;
             }
         }
-        for (let index = 0; index < 10; index++) {
-            console.log(fib(index));
 
+        function grid(row, col, mem = {}) {
+            if ((row == 0) || (col == 0)) {
+                return 0;
+            } else if ((row == 1) || (col == 1)) {
+                return 1;
+            } else {
+
+                if (`(${row},${col})` in mem) {
+                    return mem[`(${row},${col})`];
+                } else {
+                    mem[`(${row},${col})`] = grid(row - 1, col, mem) + grid(row, col - 1, mem);
+                    return mem[`(${row},${col})`];
+                }
+            }
+        }
+
+        function grid2(row, col) {
+            if ((row == 0) || (col == 0)) {
+                return 0;
+            } else if ((row == 1) || (col == 1)) {
+                return 1;
+            } else {
+                return grid2(row - 1, col) + grid2(row, col - 1);
+            }
+        }
+
+        function fact(n) {
+            if (n == 0) {
+                return 1;
+            } else {
+                return n * fact(n - 1);
+            }
+        }
+
+        function grid3(row, col) {
+            if ((row == 0) || (col == 0)) {
+                return 0;
+            } else if ((row == 1) || (col == 1)) {
+                return 1;
+            } else {
+                return fact(row + col - 2) / (fact(row - 1) * fact(col - 1));
+            }
+        }
+
+        function palin(strg) {
+            if (strg == "") {
+                return true;
+            } else {
+                const regex = /[^A-Za-z0-9]/g;
+                let temp1 = strg.replace(regex, "");
+                let txt1 = temp1.toLowerCase();
+                let leng = txt1.length;
+                let txt2 = "";
+                for (let i = 0; i < leng; i++) {
+                    txt2 += txt1[leng - (1 + i)];
+                }
+                if (txt1 == txt2) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+        }
+
+        function fib2(n, mem = {}) {
+            if (n <= 1) {
+                return 1;
+            } else {
+                if (`${n}` in mem) {
+                    return mem[`${n}`];
+                } else {
+                    mem[`${n}`] = fib2(n - 1, mem) + fib2(n - 2, mem);
+                    return mem[`${n}`];
+                }
+            }
         }
     </script>
 
